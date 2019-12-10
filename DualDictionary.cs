@@ -32,6 +32,31 @@ namespace PhotoAlbum
 
         public (TKey key, TVal val) GetByVal(TVal val) => (_byValsDict[val], val);
 
+        public bool UpdateByKey(TKey oldKey, (TKey, TVal) incoming)
+        {
+            if (!ContainsKey(oldKey)) return false;
+            var (newKey, newVal) = incoming;
+            var oldVal = _byKeysDict[oldKey];
+            Update(oldKey, newKey, oldVal, newVal);
+            return true;
+        }
+
+        public bool UpdateByVal(TVal oldVal, (TKey, TVal) incoming)
+        {
+            if (!ContainsVal(oldVal)) return false;
+            var (newKey, newVal) = incoming;
+            var oldKey = _byValsDict[oldVal];
+            Update(oldKey, newKey, oldVal, newVal);
+            return true;
+        }
+
+        private void Update(TKey oldKey, TKey newKey, TVal oldVal, TVal newVal)
+        {
+            _byKeysDict.Remove(oldKey);
+            _byKeysDict[newKey] = newVal;
+            _byValsDict.Remove(oldVal);
+            _byValsDict[newVal] = newKey;
+        }
         public void RemoveByKey(TKey key)
         {
             if (!ContainsKey(key)) return;
