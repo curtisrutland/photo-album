@@ -39,11 +39,11 @@ namespace PhotoAlbum.Services
             album.UpdateDetails(details);
         }
 
-        private string[] GetImageFiles(DirectoryInfo directory) => directory
+        private Image[] GetImageFiles(DirectoryInfo directory) => directory
             .GetFiles()
             .Where(_pathTools.IsPathAllowed)
             .Where(_pathTools.IsFileAnImage)
-            .Select(file => file.Name)
+            .Select(file => new Image { Path = file.FullName })
             .ToArray();
 
         private Album[] GetSubAlbums(DirectoryInfo directory) => directory

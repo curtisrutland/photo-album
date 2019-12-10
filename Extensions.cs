@@ -31,5 +31,7 @@ namespace PhotoAlbum
             : strings.Any(s2 => s2.Equals(s1));
 
         public static string UrlDecode(this string encoded) => WebUtility.UrlDecode(encoded);
+
+        public static string UrlEncode(this string decoded) => WebUtility.UrlEncode(decoded);
     }
 }

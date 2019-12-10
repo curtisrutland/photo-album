@@ -6,14 +6,14 @@ namespace PhotoAlbum.Models
     public class AlbumDetails
     {
         public string Name { get; set; }
-        public string CoverImagePath { get; set; }
+        public string CoverImageUrl { get; set; }
 
         public void Merge(AlbumDetails incoming)
         {
             if (!string.IsNullOrWhiteSpace(incoming.Name))
                 Name = incoming.Name;
-            if (!string.IsNullOrWhiteSpace(incoming.CoverImagePath))
-                CoverImagePath = incoming.CoverImagePath;
+            if (!string.IsNullOrWhiteSpace(incoming.CoverImageUrl))
+                CoverImageUrl = incoming.CoverImageUrl;
         }
 
         public void Save(string path)
