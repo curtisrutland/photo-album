@@ -50,6 +50,7 @@ namespace PhotoAlbum.Services
             .GetDirectories()
             .Where(_pathTools.IsPathAllowed)
             .Select(dir => GetAlbum(dir))
+            .Where(dir => !dir.IsEmpty)
             .ToArray();
 
     }

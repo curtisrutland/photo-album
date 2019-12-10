@@ -1,14 +1,12 @@
 using System.IO;
 using System.Linq;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace PhotoAlbum.Models
 {
     public class Album
     {
         private const string DETAILS_FILE_NAME = ".albumdetails.json";
-
-        [JsonIgnore]
         private string DetailsFilePath => System.IO.Path.Combine(Path, DETAILS_FILE_NAME);
 
         public Album() { }
@@ -21,9 +19,12 @@ namespace PhotoAlbum.Models
         }
 
         public string Path { get; set; }
-        public string[] ImagePaths { get; set; }
-        public Album[] SubAlbums { get; set; }
+        public string[] ImagePaths { get; set; } = new string[0];
+        public Album[] SubAlbums { get; set; } = new Album[0];
         public AlbumDetails Details { get; set; }
+
+        [JsonIgnore]
+        public bool IsEmpty => !ImagePaths.Any() && SubAlbums.All(a => a.IsEmpty);
 
         public void LoadDetails()
         {
