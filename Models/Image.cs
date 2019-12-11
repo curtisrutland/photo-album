@@ -7,6 +7,6 @@ namespace PhotoAlbum.Models
         [JsonIgnore] public string Path { get; set; }
         [JsonIgnore] public string Hash { get; set; }
         public string Name => Path.AsFilePath().NameWithoutExtension();
-        public string Url => $"/image/{Hash.UrlEncode()}";
+        public string Url => $"/images/{Hash.UrlEncode()}";
     }
 }

@@ -9,11 +9,11 @@ namespace PhotoAlbum.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class ImageController : ControllerBase
+    public class ImagesController : ControllerBase
     {
         private readonly IImageService _imageService;
 
-        public ImageController(IImageService imageService) => _imageService = imageService;
+        public ImagesController(IImageService imageService) => _imageService = imageService;
 
         [HttpGet("{hash}")]
         public IActionResult Get(string hash)

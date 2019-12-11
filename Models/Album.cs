@@ -21,7 +21,8 @@ namespace PhotoAlbum.Models
 
         [JsonIgnore] public bool IsEmpty => !Images.Any() && SubAlbums.All(a => a.IsEmpty);
         [JsonIgnore] public string Path { get; set; }
-        public string Hash { get; set; }
+        [JsonIgnore] public string Hash { get; set; }
+        public string Url => $"/albums/${Hash}";
         public Image[] Images { get; set; } = new Image[0];
         public Album[] SubAlbums { get; set; } = new Album[0];
         public AlbumDetails Details { get; set; }
