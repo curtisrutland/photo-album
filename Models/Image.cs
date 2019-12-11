@@ -1,11 +1,12 @@
-using System.IO;
+using System.Text.Json.Serialization;
 
 namespace PhotoAlbum.Models
 {
     public class Image
     {
-        public string Path { get; set; }
-        public string Name => new FileInfo(Path).Name;
-        public string Url => $"/image/{Path.UrlEncode()}";
+        [JsonIgnore] public string Path { get; set; }
+        [JsonIgnore] public string Hash { get; set; }
+        public string Name => Path.AsFilePath().NameWithoutExtension();
+        public string Url => $"/image/{Hash.UrlEncode()}";
     }
 }

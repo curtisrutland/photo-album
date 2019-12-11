@@ -13,7 +13,7 @@ namespace PhotoAlbum.Controllers
         public AlbumsController(IAlbumService service) => _service = service;
 
         [HttpGet]
-        public Album Get() => _service.GetAlbum();
+        public Album[] Get() => _service.GetAlbums();
 
         [HttpPatch("{path}/details")]
         public IActionResult PatchDetails(string path, [FromBody] AlbumDetails details)

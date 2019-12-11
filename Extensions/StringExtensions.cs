@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
@@ -11,6 +12,8 @@ namespace PhotoAlbum
 
     public static class StringExtensions
     {
+        public static FileInfo AsFilePath(this string s) => new FileInfo(s);
+        public static DirectoryInfo AsDirectoryPath(this string s) => new DirectoryInfo(s);
         public static bool EqualsIgnoreCase(this string s1, string s2) => s1.Equals(s2, StringComparison.InvariantCultureIgnoreCase);
 
         public static bool MatchesAny(this string s, IEnumerable<Regex> regexes) => regexes.Any(r => r.IsMatch(s));

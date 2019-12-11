@@ -9,9 +9,11 @@ namespace PhotoAlbum
         public static byte[] ReadAllBytes(this FileInfo info) => File.ReadAllBytes(info.FullName);
         public static string GetMimeType(this FileInfo info)
         {
-            if(!new FileExtensionContentTypeProvider().TryGetContentType(info.Name, out var mimeType)) 
+            if (!new FileExtensionContentTypeProvider().TryGetContentType(info.Name, out var mimeType))
                 return null;
             return mimeType;
         }
+
+        public static string NameWithoutExtension(this FileInfo info) => info.Name.Substring(0, info.Name.Length - info.Extension.Length);
     }
 }

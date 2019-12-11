@@ -32,7 +32,7 @@ namespace PhotoAlbum.Models
             if (string.IsNullOrWhiteSpace(details.CoverImageUrl))
                 details.CoverImageUrl = Images?.FirstOrDefault()?.Url;
             if (string.IsNullOrWhiteSpace(details.Name))
-                details.Name = new DirectoryInfo(Path).Name;
+                details.Name = Path.AsDirectoryPath().Name;
             this.Details = details;
         }
 

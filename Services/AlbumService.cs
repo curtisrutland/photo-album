@@ -8,43 +8,38 @@ namespace PhotoAlbum.Services
 {
     public interface IAlbumService
     {
-        Album GetAlbum();
-        Album GetAlbum(DirectoryInfo directory, bool recursive);
+        Album[] GetAlbums();
+        //Album GetAlbum(DirectoryInfo directory, bool recursive);
         void UpdateAlbumDetails(string path, AlbumDetails details);
     }
 
     public class AlbumService : IAlbumService
     {
         private readonly IPathTools _pathTools;
-        private readonly string _rootPath;
+        private readonly string[] _rootPaths;
+        private readonly IImageService _imageService;
 
-        public AlbumService(IOptions<AlbumSettings> settings, IPathTools pathTools)
+        public AlbumService(IOptions<AlbumSettings> settings, IPathTools pathTools, IImageService imageService)
         {
-            _rootPath = settings.Value.AlbumRootPath;
+            _rootPaths = settings.Value.AlbumRootPaths;
             _pathTools = pathTools;
+            _imageService = imageService;
         }
 
-        public Album GetAlbum() => GetAlbum(new DirectoryInfo(_rootPath));
+        public Album[] GetAlbums() => _rootPaths.Select(p => GetAlbum(p.AsDirectoryPath())).ToArray();
 
-        public Album GetAlbum(DirectoryInfo directory, bool recursive = true)
+        private Album GetAlbum(DirectoryInfo directory, bool recursive = true)
         {
             var subAlbums = recursive ? GetSubAlbums(directory) : new Album[0];
-            var imageFiles = GetImageFiles(directory);
+            var imageFiles = _imageService.GetImagesFromDirectory(directory);
             return new Album(directory.FullName, imageFiles, subAlbums);
         }
 
         public void UpdateAlbumDetails(string path, AlbumDetails details)
         {
-            var album = GetAlbum(new DirectoryInfo(path), false);
+            var album = GetAlbum(path.AsDirectoryPath(), false);
             album.UpdateDetails(details);
         }
-
-        private Image[] GetImageFiles(DirectoryInfo directory) => directory
-            .GetFiles()
-            .Where(_pathTools.IsPathAllowed)
-            .Where(_pathTools.IsFileAnImage)
-            .Select(file => new Image { Path = file.FullName })
-            .ToArray();
 
         private Album[] GetSubAlbums(DirectoryInfo directory) => directory
             .GetDirectories()
