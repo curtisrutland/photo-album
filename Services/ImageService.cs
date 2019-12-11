@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using PhotoAlbum.Exceptions;
@@ -12,37 +10,33 @@ namespace PhotoAlbum.Services
         Image[] GetImagesFromDirectory(DirectoryInfo directory);
         string GetPath(string hash);
         Image RenameImageAtHash(string hash, string newFileName);
-        void ResetImageMap();
     }
 
     public class ImageService : IImageService
     {
-        private readonly Dictionary<string, string> _hashesToPaths = new Dictionary<string, string>();
-        private readonly IPathTools _pathTools;
-        public ImageService(IPathTools pathTools) => _pathTools = pathTools;
+        private readonly IPathService _pathService;
+        public ImageService(IPathService pathTools) => _pathService = pathTools;
 
-        public void ResetImageMap() => _hashesToPaths.Clear();
-
-        public string GetPath(string hash) => _hashesToPaths.ContainsKey(hash) ? _hashesToPaths[hash] : null;
+        public string GetPath(string hash) => _pathService.GetPath(hash);
 
         public Image RenameImageAtHash(string hash, string newFileName)
         {
-            if (!_hashesToPaths.ContainsKey(hash))
+            var path = _pathService.GetPath(hash);
+            if(path == null) 
                 throw new HashNotFoundException();
-            var path = _hashesToPaths[hash];
             var file = path.AsFilePath();
             var newFullPath = Path.Combine(file.Directory.FullName, $"{newFileName}{file.Extension}");
             if (File.Exists(newFullPath))
                 throw new FileAlreadyExistsException();
             file.MoveTo(newFullPath);
-            _hashesToPaths.Remove(hash);
+            _pathService.RemovePath(hash);
             return CreateImage(file);
         }
 
         public Image[] GetImagesFromDirectory(DirectoryInfo directory) => directory
             .GetFiles()
-            .Where(_pathTools.IsPathAllowed)
-            .Where(_pathTools.IsFileAnImage)
+            .Where(_pathService.IsPathAllowed)
+            .Where(_pathService.IsFileAnImage)
             .Select(CreateImage)
             .ToArray();
 
@@ -53,7 +47,7 @@ namespace PhotoAlbum.Services
                 Path = file.FullName,
                 Hash = file.FullName.HashMD5()
             };
-            _hashesToPaths[image.Hash] = image.Path;
+            _pathService.AddPath(image.Hash, image.Path);
             return image;
         }
     }

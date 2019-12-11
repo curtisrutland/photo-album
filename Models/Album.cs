@@ -15,16 +15,17 @@ namespace PhotoAlbum.Models
             Path = path;
             Images = images;
             SubAlbums = subAlbums;
+            Hash = path.HashMD5();
             LoadDetails();
         }
 
-        public string Path { get; set; }
+        [JsonIgnore] public bool IsEmpty => !Images.Any() && SubAlbums.All(a => a.IsEmpty);
+        [JsonIgnore] public string Path { get; set; }
+        public string Hash { get; set; }
         public Image[] Images { get; set; } = new Image[0];
         public Album[] SubAlbums { get; set; } = new Album[0];
         public AlbumDetails Details { get; set; }
 
-        [JsonIgnore]
-        public bool IsEmpty => !Images.Any() && SubAlbums.All(a => a.IsEmpty);
 
         public void LoadDetails()
         {
@@ -36,10 +37,13 @@ namespace PhotoAlbum.Models
             this.Details = details;
         }
 
-        public void UpdateDetails(AlbumDetails incoming)
+        public static AlbumDetails UpdateDetails(string albumPath, AlbumDetails incoming)
         {
-            Details.Merge(incoming);
-            Details.Save(DetailsFilePath);
+            var fileName = System.IO.Path.Combine(albumPath, DETAILS_FILE_NAME);
+            var details = AlbumDetails.Load(fileName);
+            details.Merge(incoming);
+            details.Save(fileName);
+            return details;
         }
     }
 }

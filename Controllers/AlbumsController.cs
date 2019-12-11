@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PhotoAlbum.Services;
 using PhotoAlbum.Models;
+using PhotoAlbum.Exceptions;
 
 namespace PhotoAlbum.Controllers
 {
@@ -15,13 +16,19 @@ namespace PhotoAlbum.Controllers
         [HttpGet]
         public Album[] Get() => _service.GetAlbums();
 
-        [HttpPatch("{path}/details")]
-        public IActionResult PatchDetails(string path, [FromBody] AlbumDetails details)
+        [HttpPatch("{hash}")]
+        public IActionResult PatchDetails(string hash, [FromBody] AlbumDetails details)
         {
-            path = path.UrlDecode();
-            if (string.IsNullOrWhiteSpace(path)) return BadRequest("Path is not optional");
-            _service.UpdateAlbumDetails(path, details);
-            return Ok("details updated");
+            if (string.IsNullOrWhiteSpace(hash)) return BadRequest("Path is not optional");
+            try
+            {
+                var updatedDetails = _service.UpdateAlbumDetails(hash.UrlDecode(), details);
+                return Ok(updatedDetails);
+            }
+            catch (HashNotFoundException)
+            {
+                return NotFound();
+            }
         }
     }
 }

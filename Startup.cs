@@ -25,9 +25,9 @@ namespace PhotoAlbum
             services.AddControllersWithViews();
 
             services.Configure<AlbumSettings>(Configuration.GetSection("AlbumSettings"));
-            services.AddSingleton<IPathTools, PathTools>();
-            services.AddSingleton<IImageService, ImageService>();
-            services.AddScoped<IAlbumService, AlbumService>();
+            services.AddSingleton<IPathService, PathService>();
+            services.AddTransient<IImageService, ImageService>();
+            services.AddTransient<IAlbumService, AlbumService>();
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
